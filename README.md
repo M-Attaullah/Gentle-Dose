@@ -335,4 +335,5 @@ Some backend-dependent notification functionality remains planned/TODO in the cu
 ## 👤 Author
 
 **M. Attaullah**
+
 BS Software Engineering Student
