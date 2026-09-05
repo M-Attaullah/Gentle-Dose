@@ -98,13 +98,13 @@ The project management work included:
 
 **Jira** was used for project planning, backlog management, sprint management, issue tracking, and monitoring project progress.
 
-🔗 **[View Jira Project](YOUR_JIRA_LINK)**
+🔗 **[View Jira Project](https://students-team-mh2ita2v.atlassian.net/jira/software/projects/GD/boards/268/timeline?atlOrigin=eyJpIjoiNDE5YzFkNWNjMjRjNDUzMjliNGRiNGMyOWZmZTg1MmUiLCJwIjoiaiJ9)**
 
 ### Confluence
 
 **Confluence** was used for project documentation, planning records, and meeting-related documentation.
 
-🔗 **[View Confluence Documentation](YOUR_CONFLUENCE_LINK)**
+🔗 **[View Confluence Documentation](https://students-team-mh2ita2v.atlassian.net/wiki/x/AoC-/)**
 
 ## 🧪 Testing
 
@@ -130,7 +130,7 @@ The project report documents the testing process and results in more detail.
 
 The repository includes the SPM project report containing the project's problem statement, requirements, project management approach, testing activities, results, and conclusion.
 
-📄 **[View SPM Project Report](Documentation/SPM-Project-Report.pdf)**
+📄 **[View SPM Project Report](Documentation/Gentle_Dose_Report.pdf)**
 
 The report documents the use of Agile Scrum, Jira, and Confluence throughout the project lifecycle.
 
