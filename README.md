@@ -330,7 +330,6 @@ Potential future improvements include:
 
 The core patient and caregiver application flows, authentication, medication and appointment management, local persistence, progress tracking, calendar views, caregiver patient monitoring, theme support, and local notification functionality are implemented in the current project.
 
-Some backend-dependent notification functionality remains planned/TODO in the current implementation.
 
 ## 👤 Author
 
