@@ -1,335 +1,186 @@
 # 💊 Gentle Dose
 
-**Gentle Dose** is a Flutter-based medication and appointment management mobile application designed to help patients organize their medications, appointments, reminders, and health-related routines while providing a caregiver-oriented view for monitoring connected patients.
+**Gentle Dose** is a Flutter-based medication and appointment management mobile application designed to help patients organize their daily healthcare routines while allowing caregivers to monitor connected patient progress.
 
-The application combines **Flutter, Firebase Authentication, Cloud Firestore, local storage, scheduled local notifications, and Provider-based state management** to provide a structured and user-friendly experience for both patients and caregivers.
+The project combines **mobile application development** with **software project management practices**, covering the complete journey from requirements and project planning to application development, testing, and project documentation.
 
-## 📱 Overview
+## 📱 Project Overview
 
-Managing medications and medical appointments can become difficult when schedules, reminders, and progress information are spread across different places.
+Managing medications and medical appointments can be challenging, particularly when users have multiple schedules to remember. Gentle Dose provides a centralized mobile application for managing medications, appointments, reminders, progress, and caregiver involvement.
 
-Gentle Dose provides a centralized mobile experience where users can:
-
-* Manage medication schedules
-* Manage medical appointments
-* Track medication and appointment progress
-* View schedules through a calendar
-* Receive local reminders
-* Connect caregiver information with a patient account
-* Allow caregivers to view connected patients and their medication/appointment progress
-* Customize application language and theme preferences
-
-The application provides separate experiences for **Patients** and **Caregivers**.
+The application provides dedicated experiences for **Patients** and **Caregivers**, with Firebase-based authentication and cloud services alongside local data storage and notification functionality.
 
 ## ✨ Key Features
 
-### 👤 Patient Features
+### 👤 Patient Management
 
-* Patient account registration and login
-* Password reset through Firebase Authentication
-* Patient profile management
-* Add and manage medications
-* Set medication dosage and reminder times
-* Track medication status
-* Add and manage appointments
-* Store appointment details including doctor/clinic, date, time, location, reminders, and notes
-* Mark medications and appointments as completed
-* View upcoming, completed, and missed items
+* Patient registration and login
+* Password reset
+* Profile management
+* Medication management
+* Medication dosage and schedule management
+* Medication completion and missed-status tracking
 * Medication history
+* Appointment management
+* Appointment scheduling and details
 * Calendar-based schedule view
-* Progress tracking for medications and appointments
+* Progress tracking
 * Caregiver information management
-* Notification settings
-* Language settings
+* Local medication and appointment reminders
 * Light and dark theme support
-* About application section
+* Language settings
 
-### 👨‍⚕️ Caregiver Features
+### 👨‍⚕️ Caregiver Management
 
-Gentle Dose provides a dedicated caregiver experience for monitoring connected patients.
+* Caregiver registration and login
+* Caregiver profile management
+* Connected patient viewing
+* Patient progress monitoring
+* Medication and appointment statistics
+* Missed medication and appointment information
+* Individual patient details
 
-Caregivers can:
+### 📅 Calendar & Progress Tracking
 
-* Create a caregiver account
-* Sign in securely
-* Add and manage caregiver profile information
-* View connected patients
-* View patient progress
-* View medication and appointment statistics
-* View missed medications and appointments
-* Open individual patient details
-* View patient medication information
-* Access caregiver-specific navigation and dashboard views
+The application provides a calendar-based view for medication and appointment schedules.
 
-Patient-caregiver information is retrieved through **Cloud Firestore** based on the caregiver relationship stored with the patient account.
-
-## 💊 Medication Management
-
-Users can create medication records with information such as:
-
-* Medication name
-* Dosage
-* Schedule/time
-* Reminder times
-* Medication status
-
-Medication records support different states including:
-
-* Upcoming
-* Completed
-* Missed
-
-Users can also mark medication items as completed, allowing the application to calculate medication progress.
-
-## 🏥 Appointment Management
-
-The application allows users to maintain appointment information including:
-
-* Appointment title
-* Doctor / clinic name
-* Date and time
-* Location
-* Reminder preference
-* Additional notes
-
-Appointments also support status tracking and are included in the application's progress and calendar views.
-
-## 📅 Calendar & Progress Tracking
-
-Gentle Dose provides two dedicated ways to review health-related schedules.
-
-### Calendar
-
-The calendar displays medication and appointment events according to their scheduled information.
-
-### Track Progress
-
-The Track screen provides separate progress views for:
+A dedicated tracking interface also provides progress information for:
 
 * Medications
 * Appointments
 
-Progress is calculated from completed versus total records and displayed using visual progress indicators.
+Progress is calculated based on completed and total records.
 
-## 🔔 Local Notifications & Reminders
+### 🔔 Notifications
 
-The application includes local notification functionality using:
+Gentle Dose includes local notification functionality for medication and appointment reminders using Flutter notification and scheduling packages.
 
-* `flutter_local_notifications`
-* `timezone`
-* `cron`
+### 🔐 Authentication & Data Management
 
-The notification service initializes Android local notifications and supports displaying medication and appointment-related reminder notifications.
+The application integrates **Firebase Authentication** for user account management and **Cloud Firestore** for cloud-based user and caregiver-related information.
 
-> Caregiver notification actions that require backend-based delivery are currently represented as pending/TODO functionality in the implementation and are not presented as completed features.
+Medication and appointment records are maintained locally using **SharedPreferences**, allowing saved information to remain available between application sessions.
 
-## 🔐 Authentication
+## 🏗️ Application Development
 
-User authentication is implemented using **Firebase Authentication**.
+Gentle Dose was developed as a complete Flutter mobile application with multiple screens, reusable UI components, application state management, authentication, local persistence, cloud integration, and notification functionality.
 
-The application supports:
+### Technology Stack
 
-* Patient registration
-* Caregiver registration
-* Email/password sign in
-* Password validation
-* Password confirmation during registration
-* Password reset
-* Sign out
-* Authentication state monitoring
-* Role-based patient/caregiver application flow
+| Technology                      | Purpose                         |
+| ------------------------------- | ------------------------------- |
+| **Flutter**                     | Mobile application development  |
+| **Dart**                        | Programming language            |
+| **Firebase Authentication**     | User authentication             |
+| **Cloud Firestore**             | Cloud-based user/caregiver data |
+| **Provider**                    | State management                |
+| **SharedPreferences**           | Local data persistence          |
+| **flutter_local_notifications** | Local notifications             |
+| **timezone**                    | Notification scheduling support |
+| **Google Fonts**                | Application typography          |
 
-## ☁️ Firebase Integration
+## 📋 Software Project Management
 
-**Cloud Firestore** is used for cloud-based user and caregiver-related information.
+Alongside application development, Gentle Dose was managed as a software project using **Agile Scrum practices**.
 
-The application uses Firebase for:
+The project management work included:
 
-* User authentication
-* User profile information
-* Caregiver profile information
-* Patient-caregiver relationship information
-* Retrieving connected patient information
-* Real-time streams for caregiver patient data
+* Requirement analysis
+* Project planning
+* Sprint management
+* Product backlog management
+* Issue tracking
+* Progress monitoring
+* Project documentation
+* Testing and results tracking
 
-Medication and appointment records are currently managed through the application's local storage service rather than being presented as Firestore-backed medication/appointment collections.
+### Jira
 
-## 💾 Local Data Storage
+**Jira** was used for project planning, backlog management, sprint management, issue tracking, and monitoring project progress.
 
-Gentle Dose uses **SharedPreferences** for local persistence.
+🔗 **[View Jira Project](YOUR_JIRA_LINK)**
 
-Local storage is used for:
+### Confluence
 
-* Medication records
-* Appointment records
-* Medication status updates
-* Appointment status updates
-* Theme preference
+**Confluence** was used for project documentation, planning records, and meeting-related documentation.
 
-This allows medication and appointment information to remain available locally between application sessions.
+🔗 **[View Confluence Documentation](YOUR_CONFLUENCE_LINK)**
 
-## 🌙 Theme & Personalization
+## 🧪 Testing
 
-The application includes:
+Testing was performed during development to verify the application's major functionality and usability.
 
-* Light theme
-* Dark theme
-* Persistent dark-mode preference
-* Language selection screen
-* Custom application styling
-* Google Fonts integration
-* Responsive Flutter UI components
+Testing covered areas including:
 
-The theme state is managed using **Provider** and persisted locally.
+* User Registration
+* User Login
+* Medication Management
+* Appointment Scheduling
+* Caregiver Management
+* Notification System
+* Calendar View
+* Profile Management
+* User Interface responsiveness
+* Database integration
+* Notification delivery
 
-## 🏗️ Architecture & Project Structure
+The project report documents the testing process and results in more detail.
 
-The project follows a structured Flutter application organization separating core functionality, services, models, screens, and reusable widgets.
+## 📄 Project Documentation
 
-```text
-Gentle-Dose/
-│
-├── android/
-│
-├── assets/
-│   └── images/
-│
-├── lib/
-│   ├── core/
-│   │   ├── constants/
-│   │   ├── models/
-│   │   ├── providers/
-│   │   ├── services/
-│   │   └── theme/
-│   │
-│   ├── presentation/
-│   │   ├── screens/
-│   │   │   ├── auth/
-│   │   │   ├── home/
-│   │   │   ├── calendar/
-│   │   │   ├── track/
-│   │   │   ├── caregiver/
-│   │   │   ├── profile/
-│   │   │   ├── onboarding/
-│   │   │   └── ...
-│   │   │
-│   │   └── widgets/
-│   │
-│   ├── firebase_options.dart
-│   └── main.dart
-│
-├── pubspec.yaml
-└── README.md
-```
+The repository includes the SPM project report containing the project's problem statement, requirements, project management approach, testing activities, results, and conclusion.
 
-## 🛠️ Technology Stack
+📄 **[View SPM Project Report](Documentation/SPM-Project-Report.pdf)**
 
-| Technology                      | Purpose                                         |
-| ------------------------------- | ----------------------------------------------- |
-| **Flutter**                     | Cross-platform mobile application development   |
-| **Dart**                        | Application programming language                |
-| **Firebase Authentication**     | User registration, login, and password reset    |
-| **Cloud Firestore**             | User, caregiver, and patient-related cloud data |
-| **Provider**                    | Application state and theme management          |
-| **SharedPreferences**           | Local persistence                               |
-| **flutter_local_notifications** | Local notifications                             |
-| **timezone**                    | Notification scheduling support                 |
-| **cron**                        | Scheduling support                              |
-| **Google Fonts**                | Application typography                          |
-| **image_picker**                | Profile image selection                         |
-| **intl_phone_field**            | Phone number input and validation               |
+The report documents the use of Agile Scrum, Jira, and Confluence throughout the project lifecycle.
 
-## 🚀 Getting Started
+## 🎯 Project Objectives
 
-### Prerequisites
+Gentle Dose was developed to:
 
-Make sure the following are installed:
-
-* Flutter SDK
-* Dart SDK
-* Android Studio or another Flutter-supported development environment
-* Android emulator or physical Android device
-* Firebase project configured for the application
-
-### Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/your-username/Gentle-Dose.git
-cd Gentle-Dose
-```
-
-Install Flutter dependencies:
-
-```bash
-flutter pub get
-```
-
-### Firebase Configuration
-
-The application uses Firebase Authentication and Cloud Firestore.
-
-Before running the application, configure the Firebase project for your Flutter environment and provide the required Firebase configuration.
-
-Do not commit private credentials, API secrets, or environment-specific configuration that should remain private.
-
-### Run the Application
-
-```bash
-flutter run
-```
-
-## 🎯 Project Goals
-
-Gentle Dose was developed with the goal of creating a simple and organized mobile experience for medication and appointment management.
-
-The project focuses on:
-
-* Improving medication schedule organization
-* Providing appointment management in one place
-* Helping users monitor completion progress
-* Supporting caregiver visibility into connected patients
-* Applying Firebase authentication and cloud data services
-* Combining local persistence with cloud-based user information
-* Building a clean and accessible Flutter mobile interface
+* Provide a simple way to manage medications and appointments
+* Help users keep track of medication progress
+* Provide reminders for scheduled healthcare activities
+* Support caregiver involvement
+* Provide an organized mobile healthcare management experience
+* Apply modern mobile development technologies
+* Practice structured software project management using Agile methodologies
 
 ## 📚 Learning Outcomes
 
-Through this project, I gained practical experience in:
+This project provided practical experience in both **software development and software project management**, including:
 
-* Flutter mobile application development
-* Dart programming
-* Firebase Authentication
-* Cloud Firestore integration
+* Flutter and Dart development
+* Firebase integration
+* State management
 * Local data persistence
-* State management using Provider
-* Local notification implementation
-* Form handling and validation
-* Role-based application flows
-* Building reusable Flutter UI components
-* Theme management
-* Structuring a multi-screen mobile application
-* Integrating multiple Flutter packages into a complete application
-
-## 🔮 Future Improvements
-
-Potential future improvements include:
-
-* Backend-based caregiver notifications
-* More robust medication reminder scheduling
-* Expanded medication history and analytics
-* Improved caregiver-patient interaction
-* Additional accessibility improvements
-* More comprehensive cloud synchronization
-* Production-ready security and deployment configuration
+* Notification implementation
+* UI development
+* Requirement analysis
+* Agile Scrum project management
+* Sprint and backlog management
+* Issue tracking
+* Software documentation
+* Software testing
 
 ## 📌 Project Status
 
-**Status: Developed Flutter Application**
+**Status: Completed Academic Project**
 
-The core patient and caregiver application flows, authentication, medication and appointment management, local persistence, progress tracking, calendar views, caregiver patient monitoring, theme support, and local notification functionality are implemented in the current project.
+Gentle Dose was developed as an academic project combining **Mobile Application Development** and **Software Project Management**.
 
+The repository contains the developed application along with supporting project management documentation.
+
+## 🔮 Future Enhancements
+
+Potential future improvements include:
+
+* Expanded caregiver notification functionality
+* Enhanced health analytics
+* Additional healthcare integrations
+* More advanced reminder capabilities
+* Expanded cloud synchronization
+* Production-level deployment and security enhancements
 
 ## 👤 Author
 
