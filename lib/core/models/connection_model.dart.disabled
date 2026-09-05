@@ -1,0 +1,92 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+enum ConnectionStatus { pending, active, declined, blocked }
+
+enum ConnectionMethod { phone, code, qr }
+
+class PatientCaregiverConnection {
+  final String id;
+  final String patientId;
+  final String caregiverId;
+  final ConnectionStatus status;
+  final ConnectionMethod connectionMethod;
+  final DateTime createdAt;
+  final DateTime? confirmedAt;
+  final String? verificationCode;
+  final Map<String, dynamic>? metadata;
+
+  PatientCaregiverConnection({
+    required this.id,
+    required this.patientId,
+    required this.caregiverId,
+    required this.status,
+    required this.connectionMethod,
+    required this.createdAt,
+    this.confirmedAt,
+    this.verificationCode,
+    this.metadata,
+  });
+
+  factory PatientCaregiverConnection.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return PatientCaregiverConnection(
+      id: doc.id,
+      patientId: data['patientId'],
+      caregiverId: data['caregiverId'],
+      status: ConnectionStatus.values.firstWhere(
+        (status) => status.toString() == 'ConnectionStatus.${data['status']}',
+        orElse: () => ConnectionStatus.pending,
+      ),
+      connectionMethod: ConnectionMethod.values.firstWhere(
+        (method) =>
+            method.toString() == 'ConnectionMethod.${data['connectionMethod']}',
+        orElse: () => ConnectionMethod.phone,
+      ),
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      confirmedAt: data['confirmedAt'] != null
+          ? (data['confirmedAt'] as Timestamp).toDate()
+          : null,
+      verificationCode: data['verificationCode'],
+      metadata: data['metadata'],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'patientId': patientId,
+      'caregiverId': caregiverId,
+      'status': status.toString().split('.').last,
+      'connectionMethod': connectionMethod.toString().split('.').last,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'confirmedAt': confirmedAt != null
+          ? Timestamp.fromDate(confirmedAt!)
+          : null,
+      'verificationCode': verificationCode,
+      'metadata': metadata,
+    };
+  }
+
+  PatientCaregiverConnection copyWith({
+    String? id,
+    String? patientId,
+    String? caregiverId,
+    ConnectionStatus? status,
+    ConnectionMethod? connectionMethod,
+    DateTime? createdAt,
+    DateTime? confirmedAt,
+    String? verificationCode,
+    Map<String, dynamic>? metadata,
+  }) {
+    return PatientCaregiverConnection(
+      id: id ?? this.id,
+      patientId: patientId ?? this.patientId,
+      caregiverId: caregiverId ?? this.caregiverId,
+      status: status ?? this.status,
+      connectionMethod: connectionMethod ?? this.connectionMethod,
+      createdAt: createdAt ?? this.createdAt,
+      confirmedAt: confirmedAt ?? this.confirmedAt,
+      verificationCode: verificationCode ?? this.verificationCode,
+      metadata: metadata ?? this.metadata,
+    );
+  }
+}

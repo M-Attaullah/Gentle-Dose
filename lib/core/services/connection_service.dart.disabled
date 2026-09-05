@@ -1,0 +1,263 @@
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../models/user_model.dart';
+import '../models/connection_model.dart';
+import 'notification_service.dart';
+
+class ConnectionService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final NotificationService _notificationService = NotificationService();
+
+  // Generate a random 6-digit verification code
+  String _generateVerificationCode() {
+    Random random = Random();
+    return (100000 + random.nextInt(900000)).toString();
+  }
+
+  /// Connect patient to caregiver using phone number
+  Future<String?> connectViaPhone({
+    required String caregiverPhoneNumber,
+    required String patientName,
+  }) async {
+    try {
+      String? currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) throw Exception('User not authenticated');
+
+      // Find caregiver by phone number
+      QuerySnapshot caregiverQuery = await _firestore
+          .collection('users')
+          .where('phoneNumber', isEqualTo: caregiverPhoneNumber)
+          .where('userType', isEqualTo: 'caregiver')
+          .limit(1)
+          .get();
+
+      if (caregiverQuery.docs.isEmpty) {
+        throw Exception('Caregiver not found with this phone number');
+      }
+
+      String caregiverId = caregiverQuery.docs.first.id;
+      UserModel caregiver = UserModel.fromFirestore(caregiverQuery.docs.first);
+
+      // Check if connection already exists
+      QuerySnapshot existingConnection = await _firestore
+          .collection('patient_caregiver_connections')
+          .where('patientId', isEqualTo: currentUserId)
+          .where('caregiverId', isEqualTo: caregiverId)
+          .limit(1)
+          .get();
+
+      if (existingConnection.docs.isNotEmpty) {
+        PatientCaregiverConnection connection =
+            PatientCaregiverConnection.fromFirestore(
+              existingConnection.docs.first,
+            );
+        if (connection.status == ConnectionStatus.active) {
+          throw Exception('Connection already active with this caregiver');
+        } else if (connection.status == ConnectionStatus.pending) {
+          throw Exception('Connection request already sent to this caregiver');
+        }
+      }
+
+      // Generate verification code
+      String verificationCode = _generateVerificationCode();
+
+      // Create connection record
+      PatientCaregiverConnection connection = PatientCaregiverConnection(
+        id: '',
+        patientId: currentUserId,
+        caregiverId: caregiverId,
+        status: ConnectionStatus.pending,
+        connectionMethod: ConnectionMethod.phone,
+        createdAt: DateTime.now(),
+        verificationCode: verificationCode,
+        metadata: {
+          'patientName': patientName,
+          'requestedAt': DateTime.now().toIso8601String(),
+        },
+      );
+
+      // Save to Firestore
+      DocumentReference docRef = await _firestore
+          .collection('patient_caregiver_connections')
+          .add(connection.toFirestore());
+
+      // Send notification to caregiver
+      await _notificationService.sendConnectionRequest(
+        caregiverId: caregiverId,
+        patientName: patientName,
+        verificationCode: verificationCode,
+      );
+
+      return docRef.id;
+    } catch (e) {
+      print('Error connecting via phone: $e');
+      rethrow;
+    }
+  }
+
+  /// Confirm connection from caregiver side
+  Future<bool> confirmConnection({
+    required String connectionId,
+    required String verificationCode,
+  }) async {
+    try {
+      String? currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) throw Exception('User not authenticated');
+
+      // Get connection document
+      DocumentSnapshot connectionDoc = await _firestore
+          .collection('patient_caregiver_connections')
+          .doc(connectionId)
+          .get();
+
+      if (!connectionDoc.exists) {
+        throw Exception('Connection request not found');
+      }
+
+      PatientCaregiverConnection connection =
+          PatientCaregiverConnection.fromFirestore(connectionDoc);
+
+      // Verify caregiver is the intended recipient
+      if (connection.caregiverId != currentUserId) {
+        throw Exception('Unauthorized to confirm this connection');
+      }
+
+      // Verify code
+      if (connection.verificationCode != verificationCode) {
+        throw Exception('Invalid verification code');
+      }
+
+      // Update connection status to active
+      await _firestore
+          .collection('patient_caregiver_connections')
+          .doc(connectionId)
+          .update({
+            'status': ConnectionStatus.active.toString().split('.').last,
+            'confirmedAt': Timestamp.fromDate(DateTime.now()),
+          });
+
+      // Notify patient that connection was accepted
+      await _notificationService.sendConnectionAccepted(
+        patientId: connection.patientId,
+        caregiverName: await _getUserName(currentUserId),
+      );
+
+      return true;
+    } catch (e) {
+      print('Error confirming connection: $e');
+      rethrow;
+    }
+  }
+
+  /// Get all active connections for current user
+  Future<List<PatientCaregiverConnection>> getActiveConnections() async {
+    try {
+      String? currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) throw Exception('User not authenticated');
+
+      // Get current user to determine their type
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .get();
+
+      UserModel currentUser = UserModel.fromFirestore(userDoc);
+
+      Query query;
+      if (currentUser.userType == UserType.patient) {
+        query = _firestore
+            .collection('patient_caregiver_connections')
+            .where('patientId', isEqualTo: currentUserId)
+            .where('status', isEqualTo: 'active');
+      } else {
+        query = _firestore
+            .collection('patient_caregiver_connections')
+            .where('caregiverId', isEqualTo: currentUserId)
+            .where('status', isEqualTo: 'active');
+      }
+
+      QuerySnapshot snapshot = await query.get();
+      return snapshot.docs
+          .map((doc) => PatientCaregiverConnection.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error getting active connections: $e');
+      rethrow;
+    }
+  }
+
+  /// Get pending connection requests for caregiver
+  Future<List<PatientCaregiverConnection>> getPendingRequests() async {
+    try {
+      String? currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) throw Exception('User not authenticated');
+
+      QuerySnapshot snapshot = await _firestore
+          .collection('patient_caregiver_connections')
+          .where('caregiverId', isEqualTo: currentUserId)
+          .where('status', isEqualTo: 'pending')
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => PatientCaregiverConnection.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error getting pending requests: $e');
+      rethrow;
+    }
+  }
+
+  /// Disconnect patient and caregiver
+  Future<bool> disconnectConnection(String connectionId) async {
+    try {
+      await _firestore
+          .collection('patient_caregiver_connections')
+          .doc(connectionId)
+          .delete();
+      return true;
+    } catch (e) {
+      print('Error disconnecting: $e');
+      rethrow;
+    }
+  }
+
+  /// Helper method to get user name by ID
+  Future<String> _getUserName(String userId) async {
+    try {
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userDoc.exists) {
+        UserModel user = UserModel.fromFirestore(userDoc);
+        return user.name;
+      }
+      return 'Unknown User';
+    } catch (e) {
+      return 'Unknown User';
+    }
+  }
+
+  /// Get caregiver IDs for a patient (for sending notifications)
+  Future<List<String>> getCaregiverIdsForPatient(String patientId) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('patient_caregiver_connections')
+          .where('patientId', isEqualTo: patientId)
+          .where('status', isEqualTo: 'active')
+          .get();
+
+      return snapshot.docs
+          .map((doc) => PatientCaregiverConnection.fromFirestore(doc))
+          .map((connection) => connection.caregiverId)
+          .toList();
+    } catch (e) {
+      print('Error getting caregiver IDs: $e');
+      return [];
+    }
+  }
+}
