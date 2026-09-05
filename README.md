@@ -28,7 +28,6 @@ The application provides dedicated experiences for **Patients** and **Caregivers
 * Caregiver information management
 * Local medication and appointment reminders
 * Light and dark theme support
-* Language settings
 
 ### 👨‍⚕️ Caregiver Management
 
@@ -117,12 +116,10 @@ Testing covered areas including:
 * Medication Management
 * Appointment Scheduling
 * Caregiver Management
-* Notification System
 * Calendar View
 * Profile Management
 * User Interface responsiveness
 * Database integration
-* Notification delivery
 
 The project report documents the testing process and results in more detail.
 
@@ -176,6 +173,7 @@ The repository contains the developed application along with supporting project 
 Potential future improvements include:
 
 * Expanded caregiver notification functionality
+* Real-time notification system
 * Enhanced health analytics
 * Additional healthcare integrations
 * More advanced reminder capabilities
